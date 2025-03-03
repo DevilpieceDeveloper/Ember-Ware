@@ -37,6 +37,14 @@ mainFrame.Draggable = true
 mainFrame.Parent = gui
 addCorner(mainFrame, 20)
 
+-- Background Image
+local backgroundImage = Instance.new("ImageLabel")
+backgroundImage.Size = UDim2.new(1, 0, 1, 0)
+backgroundImage.Position = UDim2.new(0, 0, 0, 0)
+backgroundImage.BackgroundTransparency = 1
+backgroundImage.ImageTransparency = 1 -- Hidden by default
+backgroundImage.Parent = mainFrame
+
 -- Close Button
 local closeButton = Instance.new("TextButton")
 closeButton.Size = UDim2.new(0, 40, 0, 40)
@@ -102,90 +110,67 @@ local homeText = Instance.new("TextLabel")
 homeText.Size = UDim2.new(1, 0, 0.2, 0)
 homeText.Position = UDim2.new(0, 0, 0, 20)
 homeText.Text = "Welcome, " .. player.DisplayName .. " to Emberware v.1"
-homeText.TextColor3 = Color3.fromRGB(255, 255, 255)
+homeText.TextColor3 = Color3.fromRGB(255, 100, 50) -- Red/Orange Color
 homeText.BackgroundTransparency = 1
 homeText.TextScaled = true
 homeText.Font = Enum.Font.GothamBold
 homeText.Parent = homeFrame
 
--- TP Tab Content
-local tpList = Instance.new("ScrollingFrame")
-tpList.Size = UDim2.new(1, 0, 1, 0)
-tpList.Position = UDim2.new(0, 0, 0, 0)
-tpList.CanvasSize = UDim2.new(0, 0, 2, 0)
-tpList.BackgroundTransparency = 1
-tpList.Parent = tpFrame
+-- Config Tab Content
+local colorTextBox = Instance.new("TextBox")
+colorTextBox.Size = UDim2.new(0.8, 0, 0, 40)
+colorTextBox.Position = UDim2.new(0.1, 0, 0, 20)
+colorTextBox.PlaceholderText = "Enter RGB (e.g., 2,255,19)"
+colorTextBox.Text = ""
+colorTextBox.Parent = configFrame
+addCorner(colorTextBox, 10)
 
-local function refreshPlayerList()
-    for _, v in pairs(tpList:GetChildren()) do
-        if v:IsA("TextButton") then v:Destroy() end
-    end
+local applyColorButton = Instance.new("TextButton")
+applyColorButton.Size = UDim2.new(0.8, 0, 0, 40)
+applyColorButton.Position = UDim2.new(0.1, 0, 0, 70)
+applyColorButton.Text = "Apply Button Color"
+applyColorButton.Parent = configFrame
+addCorner(applyColorButton, 10)
 
-    local yOffset = 10
-    for _, plr in pairs(game.Players:GetPlayers()) do
-        local button = Instance.new("TextButton")
-        button.Size = UDim2.new(0.9, 0, 0, 50)
-        button.Position = UDim2.new(0.05, 0, 0, yOffset)
-        button.Text = plr.DisplayName
-        button.Parent = tpList
-        button.TextColor3 = Color3.fromRGB(255, 255, 255)
-        button.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-        button.Font = Enum.Font.GothamBold
-        button.TextScaled = true
-        addCorner(button, 10)
+local imageTextBox = Instance.new("TextBox")
+imageTextBox.Size = UDim2.new(0.8, 0, 0, 40)
+imageTextBox.Position = UDim2.new(0.1, 0, 0, 130)
+imageTextBox.PlaceholderText = "Enter Image ID"
+imageTextBox.Text = ""
+imageTextBox.Parent = configFrame
+addCorner(imageTextBox, 10)
 
-        button.MouseButton1Click:Connect(function()
-            player.Character:SetPrimaryPartCFrame(plr.Character.HumanoidRootPart.CFrame)
-        end)
+local applyImageButton = Instance.new("TextButton")
+applyImageButton.Size = UDim2.new(0.8, 0, 0, 40)
+applyImageButton.Position = UDim2.new(0.1, 0, 0, 180)
+applyImageButton.Text = "Apply Background Image"
+applyImageButton.Parent = configFrame
+addCorner(applyImageButton, 10)
 
-        yOffset = yOffset + 60
-    end
-end
-
--- Misc Tab Content
-local function createMiscButton(name, posY)
-    local button = Instance.new("TextButton")
-    button.Size = UDim2.new(0.8, 0, 0, 50)
-    button.Position = UDim2.new(0.1, 0, 0, posY)
-    button.Text = name
-    button.TextColor3 = Color3.fromRGB(255, 255, 255)
-    button.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-    button.Parent = miscFrame
-    button.Font = Enum.Font.GothamBold
-    button.TextScaled = true
-    addCorner(button, 10)
-    return button
-end
-
-local glowButton = createMiscButton("Glow", 20)
-local invisButton = createMiscButton("Invisibility", 80)
-local jumpButton = createMiscButton("Infinite Jump", 140)
-
--- Toggle Infinite Jump
-local jumpEnabled = false
-jumpButton.MouseButton1Click:Connect(function()
-    jumpEnabled = not jumpEnabled
-    game:GetService("UserInputService").JumpRequest:Connect(function()
-        if jumpEnabled then
-            player.Character:FindFirstChildOfClass("Humanoid"):ChangeState(Enum.HumanoidStateType.Jumping)
+-- Change Button Color Function
+applyColorButton.MouseButton1Click:Connect(function()
+    local r, g, b = colorTextBox.Text:match("(%d+),(%d+),(%d+)")
+    if r and g and b then
+        local newColor = Color3.fromRGB(tonumber(r), tonumber(g), tonumber(b))
+        for _, button in pairs(tabFrame:GetChildren()) do
+            if button:IsA("TextButton") then
+                button.BackgroundColor3 = newColor
+            end
         end
-    end)
+    end
 end)
 
--- Toggle Invisibility
-local invisEnabled = false
-invisButton.MouseButton1Click:Connect(function()
-    invisEnabled = not invisEnabled
-    for _, v in pairs(player.Character:GetDescendants()) do
-        if v:IsA("BasePart") then
-            v.Transparency = invisEnabled and 1 or 0
-        end
+-- Change Background Image Function
+applyImageButton.MouseButton1Click:Connect(function()
+    local imageID = imageTextBox.Text
+    if imageID and imageID ~= "" then
+        backgroundImage.Image = "rbxassetid://" .. imageID
+        backgroundImage.ImageTransparency = 0
     end
 end)
 
 -- Tab Switching
-homeTabButton.MouseButton1Click:Connect(function() homeFrame.Visible, tpFrame.Visible, miscFrame.Visible = true, false, false end)
-tpTabButton.MouseButton1Click:Connect(function() refreshPlayerList() homeFrame.Visible, tpFrame.Visible, miscFrame.Visible = false, true, false end)
-miscTabButton.MouseButton1Click:Connect(function() homeFrame.Visible, tpFrame.Visible, miscFrame.Visible = false, false, true end)
+homeTabButton.MouseButton1Click:Connect(function() homeFrame.Visible, tpFrame.Visible, miscFrame.Visible, configFrame.Visible = true, false, false, false end)
+configTabButton.MouseButton1Click:Connect(function() homeFrame.Visible, tpFrame.Visible, miscFrame.Visible, configFrame.Visible = false, false, false, true end)
 
 mainButton.MouseButton1Click:Connect(function() mainFrame.Visible = not mainFrame.Visible end)
