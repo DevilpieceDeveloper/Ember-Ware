@@ -1,6 +1,7 @@
 local player = game.Players.LocalPlayer
 local teleportService = game:GetService("TeleportService")
 local mouse = player:GetMouse()
+local uis = game:GetService("UserInputService")
 
 -- Create UI
 local gui = Instance.new("ScreenGui")
@@ -38,6 +39,36 @@ mainFrame.Draggable = true
 mainFrame.Parent = gui
 addCorner(mainFrame, 20)
 
+-- Make UI Draggable
+local dragging, dragInput, dragStart, startPos
+
+mainFrame.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+        dragStart = input.Position
+        startPos = mainFrame.Position
+
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+
+mainFrame.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+        dragInput = input
+    end
+end)
+
+uis.InputChanged:Connect(function(input)
+    if input == dragInput and dragging then
+        local delta = input.Position - dragStart
+        mainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+end)
+
 -- Close Button
 local closeButton = Instance.new("TextButton")
 closeButton.Size = UDim2.new(0, 40, 0, 40)
@@ -59,9 +90,9 @@ tabHolder.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 tabHolder.Parent = mainFrame
 addCorner(tabHolder, 15)
 
--- Tab Buttons
-local tabs = {"Home", "TP", "Misc", "Config"}
+-- Create Content Frames
 local contentFrames = {}
+local tabs = {"Home", "TP", "Misc", "Config"}
 
 for i, tabName in ipairs(tabs) do
     local tabButton = Instance.new("TextButton")
@@ -80,16 +111,15 @@ for i, tabName in ipairs(tabs) do
     contentFrame.Position = UDim2.new(0, 0, 0, 50)
     contentFrame.BackgroundTransparency = 1
     contentFrame.Parent = mainFrame
-    contentFrame.Visible = false
+    contentFrame.Visible = (i == 1) -- Only Home is visible by default
     contentFrames[tabName] = contentFrame
-end
 
--- Function to switch tabs
-local function showTab(tabName)
-    for _, frame in pairs(contentFrames) do
-        frame.Visible = false
-    end
-    contentFrames[tabName].Visible = true
+    tabButton.MouseButton1Click:Connect(function()
+        for _, frame in pairs(contentFrames) do
+            frame.Visible = false
+        end
+        contentFrame.Visible = true
+    end)
 end
 
 -- Home Tab Content
@@ -135,40 +165,6 @@ end
 game.Players.PlayerAdded:Connect(updatePlayerList)
 game.Players.PlayerRemoving:Connect(updatePlayerList)
 updatePlayerList()
-
--- Misc Tab
-local miscOptions = {"Glow", "Invisibility", "Infinite Jump"}
-
-for i, option in ipairs(miscOptions) do
-    local miscButton = Instance.new("TextButton")
-    miscButton.Size = UDim2.new(1, 0, 0, 50)
-    miscButton.Position = UDim2.new(0, 0, (i - 1) * 60, 0)
-    miscButton.Text = option
-    miscButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-    miscButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    miscButton.Parent = contentFrames["Misc"]
-    addCorner(miscButton, 10)
-
-    miscButton.MouseButton1Click:Connect(function()
-        if option == "Glow" then
-            if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-                local glow = Instance.new("PointLight", player.Character.HumanoidRootPart)
-                glow.Brightness = 5
-            end
-        elseif option == "Invisibility" then
-            for _, v in ipairs(player.Character:GetDescendants()) do
-                if v:IsA("BasePart") or v:IsA("Accessory") then
-                    v.Transparency = 1
-                end
-            end
-        elseif option == "Infinite Jump" then
-            local uis = game:GetService("UserInputService")
-            uis.JumpRequest:Connect(function()
-                player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
-            end)
-        end
-    end)
-end
 
 -- Open GUI on Button Click
 mainButton.MouseButton1Click:Connect(function()
