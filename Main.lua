@@ -15,9 +15,9 @@ end
 
 -- Create Main Button
 local mainButton = Instance.new("TextButton")
-mainButton.Size = UDim2.new(0, 150, 0, 60)
-mainButton.Position = UDim2.new(0, 20, 0, 20)
-mainButton.Text = "EmberWare"
+mainButton.Size = UDim2.new(0, 200, 0, 80)
+mainButton.Position = UDim2.new(0, 30, 0, 30)
+mainButton.Text = "Ember-Ware"
 mainButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
 mainButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 mainButton.Parent = gui
@@ -26,18 +26,18 @@ mainButton.Font = Enum.Font.GothamBold
 mainButton.AutoButtonColor = true
 addCorner(mainButton, 20)
 
--- Create Main Frame
+-- Create Main UI Frame
 local mainFrame = Instance.new("Frame")
-mainFrame.Size = UDim2.new(0, 500, 0, 350)
-mainFrame.Position = UDim2.new(0.5, -250, 0.5, -175)
+mainFrame.Size = UDim2.new(0, 600, 0, 400)
+mainFrame.Position = UDim2.new(0.5, -300, 0.5, -200)
 mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-mainFrame.Visible = false -- Default to hidden
+mainFrame.Visible = false
 mainFrame.Active = true
 mainFrame.Draggable = true
 mainFrame.Parent = gui
 addCorner(mainFrame, 20)
 
--- Create Close Button (X)
+-- Close Button
 local closeButton = Instance.new("TextButton")
 closeButton.Size = UDim2.new(0, 40, 0, 40)
 closeButton.Position = UDim2.new(1, -50, 0, 10)
@@ -51,194 +51,141 @@ closeButton.MouseButton1Click:Connect(function()
     mainFrame.Visible = false
 end)
 
--- Create Tab Buttons (Home, TP, Misc, Config)
-local homeTabButton = Instance.new("TextButton")
-homeTabButton.Size = UDim2.new(0, 120, 0, 40)
-homeTabButton.Position = UDim2.new(0, 10, 0, 60)
-homeTabButton.Text = "Home"
-homeTabButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-homeTabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-homeTabButton.Parent = mainFrame
-addCorner(homeTabButton, 10)
+-- Sidebar for Tabs
+local tabFrame = Instance.new("Frame")
+tabFrame.Size = UDim2.new(0, 120, 1, 0)
+tabFrame.Position = UDim2.new(0, 0, 0, 0)
+tabFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+tabFrame.Parent = mainFrame
+addCorner(tabFrame, 10)
 
-local tpTabButton = Instance.new("TextButton")
-tpTabButton.Size = UDim2.new(0, 120, 0, 40)
-tpTabButton.Position = UDim2.new(0, 10, 0, 110)
-tpTabButton.Text = "TP"
-tpTabButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-tpTabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-tpTabButton.Parent = mainFrame
-addCorner(tpTabButton, 10)
+-- Function to create tab buttons
+local function createTabButton(name, posY)
+    local button = Instance.new("TextButton")
+    button.Size = UDim2.new(1, 0, 0, 50)
+    button.Position = UDim2.new(0, 0, 0, posY)
+    button.Text = name
+    button.TextColor3 = Color3.fromRGB(255, 255, 255)
+    button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    button.Parent = tabFrame
+    button.Font = Enum.Font.GothamBold
+    button.TextScaled = true
+    addCorner(button, 10)
+    return button
+end
 
-local miscTabButton = Instance.new("TextButton")
-miscTabButton.Size = UDim2.new(0, 120, 0, 40)
-miscTabButton.Position = UDim2.new(0, 10, 0, 160)
-miscTabButton.Text = "Misc"
-miscTabButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-miscTabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-miscTabButton.Parent = mainFrame
-addCorner(miscTabButton, 10)
+-- Tabs
+local homeTabButton = createTabButton("Home", 10)
+local tpTabButton = createTabButton("TP", 70)
+local miscTabButton = createTabButton("Misc", 130)
+local configTabButton = createTabButton("Config", 190)
 
-local configTabButton = Instance.new("TextButton")
-configTabButton.Size = UDim2.new(0, 120, 0, 40)
-configTabButton.Position = UDim2.new(0, 10, 0, 210)
-configTabButton.Text = "Config"
-configTabButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-configTabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-configTabButton.Parent = mainFrame
-addCorner(configTabButton, 10)
+-- Content Frames
+local function createContentFrame()
+    local frame = Instance.new("Frame")
+    frame.Size = UDim2.new(1, -140, 1, -20)
+    frame.Position = UDim2.new(0, 130, 0, 10)
+    frame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    frame.Parent = mainFrame
+    frame.Visible = false
+    addCorner(frame, 10)
+    return frame
+end
 
--- Create Tabs Content (Home, TP, Misc, Config)
-local homeFrame = Instance.new("Frame")
-homeFrame.Size = UDim2.new(0, 480, 0, 250)
-homeFrame.Position = UDim2.new(0, 10, 0, 60)
-homeFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-homeFrame.Parent = mainFrame
-addCorner(homeFrame, 10)
+local homeFrame = createContentFrame()
+local tpFrame = createContentFrame()
+local miscFrame = createContentFrame()
+local configFrame = createContentFrame()
 
-local welcomeLabel = Instance.new("TextLabel")
-welcomeLabel.Size = UDim2.new(0, 480, 0, 40)
-welcomeLabel.Position = UDim2.new(0, 0, 0, 10)
-welcomeLabel.Text = "Welcome, " .. player.DisplayName .. " to EmberWare v.1"
-welcomeLabel.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-welcomeLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-welcomeLabel.TextScaled = true
-welcomeLabel.Font = Enum.Font.GothamBold
-welcomeLabel.Parent = homeFrame
+-- Home Tab Content
+local homeText = Instance.new("TextLabel")
+homeText.Size = UDim2.new(1, 0, 0.2, 0)
+homeText.Position = UDim2.new(0, 0, 0, 20)
+homeText.Text = "Welcome, " .. player.DisplayName .. " to Emberware v.1"
+homeText.TextColor3 = Color3.fromRGB(255, 255, 255)
+homeText.BackgroundTransparency = 1
+homeText.TextScaled = true
+homeText.Font = Enum.Font.GothamBold
+homeText.Parent = homeFrame
 
-local tpFrame = Instance.new("Frame")
-tpFrame.Size = UDim2.new(0, 480, 0, 250)
-tpFrame.Position = UDim2.new(0, 10, 0, 60)
-tpFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-tpFrame.Visible = false
-tpFrame.Parent = mainFrame
-addCorner(tpFrame, 10)
-
--- Add List of Players to TP Tab
+-- TP Tab Content
 local tpList = Instance.new("ScrollingFrame")
-tpList.Size = UDim2.new(0, 460, 0, 200)
-tpList.Position = UDim2.new(0, 10, 0, 10)
-tpList.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-tpList.ScrollBarThickness = 10
+tpList.Size = UDim2.new(1, 0, 1, 0)
+tpList.Position = UDim2.new(0, 0, 0, 0)
+tpList.CanvasSize = UDim2.new(0, 0, 2, 0)
+tpList.BackgroundTransparency = 1
 tpList.Parent = tpFrame
 
-for _, plr in ipairs(game.Players:GetPlayers()) do
-    if plr ~= player then
-        local tpButton = Instance.new("TextButton")
-        tpButton.Size = UDim2.new(0, 460, 0, 30)
-        tpButton.Text = plr.Name
-        tpButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-        tpButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-        tpButton.Parent = tpList
+local function refreshPlayerList()
+    for _, v in pairs(tpList:GetChildren()) do
+        if v:IsA("TextButton") then v:Destroy() end
+    end
 
-        tpButton.MouseButton1Click:Connect(function()
-            teleportService:TeleportToPlaceInstance(game.PlaceId, plr.UserId)
+    local yOffset = 10
+    for _, plr in pairs(game.Players:GetPlayers()) do
+        local button = Instance.new("TextButton")
+        button.Size = UDim2.new(0.9, 0, 0, 50)
+        button.Position = UDim2.new(0.05, 0, 0, yOffset)
+        button.Text = plr.DisplayName
+        button.Parent = tpList
+        button.TextColor3 = Color3.fromRGB(255, 255, 255)
+        button.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+        button.Font = Enum.Font.GothamBold
+        button.TextScaled = true
+        addCorner(button, 10)
+
+        button.MouseButton1Click:Connect(function()
+            player.Character:SetPrimaryPartCFrame(plr.Character.HumanoidRootPart.CFrame)
         end)
+
+        yOffset = yOffset + 60
     end
 end
 
-local miscFrame = Instance.new("Frame")
-miscFrame.Size = UDim2.new(0, 480, 0, 250)
-miscFrame.Position = UDim2.new(0, 10, 0, 60)
-miscFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-miscFrame.Visible = false
-miscFrame.Parent = mainFrame
-addCorner(miscFrame, 10)
+-- Misc Tab Content
+local function createMiscButton(name, posY)
+    local button = Instance.new("TextButton")
+    button.Size = UDim2.new(0.8, 0, 0, 50)
+    button.Position = UDim2.new(0.1, 0, 0, posY)
+    button.Text = name
+    button.TextColor3 = Color3.fromRGB(255, 255, 255)
+    button.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+    button.Parent = miscFrame
+    button.Font = Enum.Font.GothamBold
+    button.TextScaled = true
+    addCorner(button, 10)
+    return button
+end
 
--- Add Misc Buttons (Glow, Invisibility, Infinite Jump, etc.)
-local glowButton = Instance.new("TextButton")
-glowButton.Size = UDim2.new(0, 200, 0, 40)
-glowButton.Position = UDim2.new(0, 10, 0, 10)
-glowButton.Text = "Glow"
-glowButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-glowButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-glowButton.Parent = miscFrame
-addCorner(glowButton, 10)
+local glowButton = createMiscButton("Glow", 20)
+local invisButton = createMiscButton("Invisibility", 80)
+local jumpButton = createMiscButton("Infinite Jump", 140)
 
-local invisButton = Instance.new("TextButton")
-invisButton.Size = UDim2.new(0, 200, 0, 40)
-invisButton.Position = UDim2.new(0, 10, 0, 60)
-invisButton.Text = "Invisibility"
-invisButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-invisButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-invisButton.Parent = miscFrame
-addCorner(invisButton, 10)
-
-local infiniteJumpButton = Instance.new("TextButton")
-infiniteJumpButton.Size = UDim2.new(0, 200, 0, 40)
-infiniteJumpButton.Position = UDim2.new(0, 10, 0, 110)
-infiniteJumpButton.Text = "Infinite Jump"
-infiniteJumpButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-infiniteJumpButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-infiniteJumpButton.Parent = miscFrame
-addCorner(infiniteJumpButton, 10)
-
-local joinGameButton = Instance.new("TextButton")
-joinGameButton.Size = UDim2.new(0, 200, 0, 40)
-joinGameButton.Position = UDim2.new(0, 10, 0, 160)
-joinGameButton.Text = "Join Game"
-joinGameButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-joinGameButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-joinGameButton.Parent = miscFrame
-addCorner(joinGameButton, 10)
-
-local configFrame = Instance.new("Frame")
-configFrame.Size = UDim2.new(0, 480, 0, 250)
-configFrame.Position = UDim2.new(0, 10, 0, 60)
-configFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-configFrame.Visible = false
-configFrame.Parent = mainFrame
-addCorner(configFrame, 10)
-
--- Add Config Options (Color Picker, ImageID)
-local colorPickerButton = Instance.new("TextButton")
-colorPickerButton.Size = UDim2.new(0, 200, 0, 40)
-colorPickerButton.Position = UDim2.new(0, 10, 0, 10)
-colorPickerButton.Text = "Change Color"
-colorPickerButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-colorPickerButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-colorPickerButton.Parent = configFrame
-addCorner(colorPickerButton, 10)
-
-local imageIdButton = Instance.new("TextButton")
-imageIdButton.Size = UDim2.new(0, 200, 0, 40)
-imageIdButton.Position = UDim2.new(0, 10, 0, 60)
-imageIdButton.Text = "Set ImageID"
-imageIdButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-imageIdButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-imageIdButton.Parent = configFrame
-addCorner(imageIdButton, 10)
-
--- Tab Button Logic
-homeTabButton.MouseButton1Click:Connect(function()
-    homeFrame.Visible = true
-    tpFrame.Visible = false
-    miscFrame.Visible = false
-    configFrame.Visible = false
+-- Toggle Infinite Jump
+local jumpEnabled = false
+jumpButton.MouseButton1Click:Connect(function()
+    jumpEnabled = not jumpEnabled
+    game:GetService("UserInputService").JumpRequest:Connect(function()
+        if jumpEnabled then
+            player.Character:FindFirstChildOfClass("Humanoid"):ChangeState(Enum.HumanoidStateType.Jumping)
+        end
+    end)
 end)
 
-tpTabButton.MouseButton1Click:Connect(function()
-    homeFrame.Visible = false
-    tpFrame.Visible = true
-    miscFrame.Visible = false
-    configFrame.Visible = false
+-- Toggle Invisibility
+local invisEnabled = false
+invisButton.MouseButton1Click:Connect(function()
+    invisEnabled = not invisEnabled
+    for _, v in pairs(player.Character:GetDescendants()) do
+        if v:IsA("BasePart") then
+            v.Transparency = invisEnabled and 1 or 0
+        end
+    end
 end)
 
-miscTabButton.MouseButton1Click:Connect(function()
-    homeFrame.Visible = false
-    tpFrame.Visible = false
-    miscFrame.Visible = true
-    configFrame.Visible = false
-end)
+-- Tab Switching
+homeTabButton.MouseButton1Click:Connect(function() homeFrame.Visible, tpFrame.Visible, miscFrame.Visible = true, false, false end)
+tpTabButton.MouseButton1Click:Connect(function() refreshPlayerList() homeFrame.Visible, tpFrame.Visible, miscFrame.Visible = false, true, false end)
+miscTabButton.MouseButton1Click:Connect(function() homeFrame.Visible, tpFrame.Visible, miscFrame.Visible = false, false, true end)
 
-configTabButton.MouseButton1Click:Connect(function()
-    homeFrame.Visible = false
-    tpFrame.Visible = false
-    miscFrame.Visible = false
-    configFrame.Visible = true
-end)
-
--- Show GUI when clicking main button
-mainButton.MouseButton1Click:Connect(function()
-    mainFrame.Visible = not mainFrame.Visible
-end)
+mainButton.MouseButton1Click:Connect(function() mainFrame.Visible = not mainFrame.Visible end)
