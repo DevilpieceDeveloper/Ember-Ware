@@ -39,36 +39,6 @@ mainFrame.Draggable = true
 mainFrame.Parent = gui
 addCorner(mainFrame, 20)
 
--- Make UI Draggable
-local dragging, dragInput, dragStart, startPos
-
-mainFrame.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-        dragging = true
-        dragStart = input.Position
-        startPos = mainFrame.Position
-
-        input.Changed:Connect(function()
-            if input.UserInputState == Enum.UserInputState.End then
-                dragging = false
-            end
-        end)
-    end
-end)
-
-mainFrame.InputChanged:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-        dragInput = input
-    end
-end)
-
-uis.InputChanged:Connect(function(input)
-    if input == dragInput and dragging then
-        local delta = input.Position - dragStart
-        mainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-    end
-end)
-
 -- Close Button
 local closeButton = Instance.new("TextButton")
 closeButton.Size = UDim2.new(0, 40, 0, 40)
@@ -133,7 +103,7 @@ homeText.TextScaled = true
 homeText.Font = Enum.Font.GothamBold
 homeText.Parent = contentFrames["Home"]
 
--- TP Tab Content (List of players)
+-- TP Tab Content
 local playerList = Instance.new("ScrollingFrame")
 playerList.Size = UDim2.new(1, 0, 1, -10)
 playerList.Position = UDim2.new(0, 0, 0, 10)
@@ -165,6 +135,30 @@ end
 game.Players.PlayerAdded:Connect(updatePlayerList)
 game.Players.PlayerRemoving:Connect(updatePlayerList)
 updatePlayerList()
+
+-- Misc Tab Content
+local miscOptions = {"Glow", "Invisibility", "Infinite Jump", "Join Game ID"}
+for i, option in ipairs(miscOptions) do
+    local miscButton = Instance.new("TextButton")
+    miscButton.Size = UDim2.new(1, 0, 0, 50)
+    miscButton.Position = UDim2.new(0, 0, 0, (i - 1) * 55)
+    miscButton.Text = option
+    miscButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    miscButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    miscButton.Parent = contentFrames["Misc"]
+    addCorner(miscButton, 10)
+end
+
+-- Config Tab Content
+local configText = Instance.new("TextLabel")
+configText.Size = UDim2.new(1, 0, 0, 50)
+configText.Position = UDim2.new(0, 0, 0, 10)
+configText.Text = "Configuration Settings (Coming Soon)"
+configText.TextColor3 = Color3.fromRGB(255, 255, 255)
+configText.BackgroundTransparency = 1
+configText.TextScaled = true
+configText.Font = Enum.Font.GothamBold
+configText.Parent = contentFrames["Config"]
 
 -- Open GUI on Button Click
 mainButton.MouseButton1Click:Connect(function()
