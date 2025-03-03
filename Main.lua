@@ -173,39 +173,14 @@ infiniteJumpButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 infiniteJumpButton.Parent = miscFrame
 addCorner(infiniteJumpButton, 10)
 
-local joinGameFrame = Instance.new("Frame")
-joinGameFrame.Size = UDim2.new(0, 480, 0, 250)
-joinGameFrame.Position = UDim2.new(0, 10, 0, 60)
-joinGameFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-joinGameFrame.Visible = false
-joinGameFrame.Parent = mainFrame
-addCorner(joinGameFrame, 10)
-
--- Create Join Game TextBox
-local joinGameTextBox = Instance.new("TextBox")
-joinGameTextBox.Size = UDim2.new(0, 200, 0, 40)
-joinGameTextBox.Position = UDim2.new(0, 10, 0, 10)
-joinGameTextBox.PlaceholderText = "Enter ID"
-joinGameTextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-joinGameTextBox.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-joinGameTextBox.Parent = joinGameFrame
-addCorner(joinGameTextBox, 10)
-
 local joinGameButton = Instance.new("TextButton")
 joinGameButton.Size = UDim2.new(0, 200, 0, 40)
-joinGameButton.Position = UDim2.new(0, 10, 0, 60)
+joinGameButton.Position = UDim2.new(0, 10, 0, 160)
 joinGameButton.Text = "Join Game"
 joinGameButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
 joinGameButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-joinGameButton.Parent = joinGameFrame
+joinGameButton.Parent = miscFrame
 addCorner(joinGameButton, 10)
-
-joinGameButton.MouseButton1Click:Connect(function()
-    local gameId = joinGameTextBox.Text
-    if gameId ~= "" then
-        teleportService:Teleport(gameId, player)
-    end
-end)
 
 local configFrame = Instance.new("Frame")
 configFrame.Size = UDim2.new(0, 480, 0, 250)
@@ -215,7 +190,26 @@ configFrame.Visible = false
 configFrame.Parent = mainFrame
 addCorner(configFrame, 10)
 
--- Tab Switching Logic
+-- Add Config Options (Color Picker, ImageID)
+local colorPickerButton = Instance.new("TextButton")
+colorPickerButton.Size = UDim2.new(0, 200, 0, 40)
+colorPickerButton.Position = UDim2.new(0, 10, 0, 10)
+colorPickerButton.Text = "Change Color"
+colorPickerButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+colorPickerButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+colorPickerButton.Parent = configFrame
+addCorner(colorPickerButton, 10)
+
+local imageIdButton = Instance.new("TextButton")
+imageIdButton.Size = UDim2.new(0, 200, 0, 40)
+imageIdButton.Position = UDim2.new(0, 10, 0, 60)
+imageIdButton.Text = "Set ImageID"
+imageIdButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+imageIdButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+imageIdButton.Parent = configFrame
+addCorner(imageIdButton, 10)
+
+-- Tab Button Logic
 homeTabButton.MouseButton1Click:Connect(function()
     homeFrame.Visible = true
     tpFrame.Visible = false
@@ -244,7 +238,7 @@ configTabButton.MouseButton1Click:Connect(function()
     configFrame.Visible = true
 end)
 
--- Show Main GUI on Ember-Ware Button Click
+-- Show GUI when clicking main button
 mainButton.MouseButton1Click:Connect(function()
-    mainFrame.Visible = true
+    mainFrame.Visible = not mainFrame.Visible
 end)
