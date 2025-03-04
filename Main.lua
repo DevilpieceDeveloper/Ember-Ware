@@ -117,10 +117,7 @@ creatorLabel.Parent = tabs["Home"].Frame
 
 -- Changelog Tab (Editable Text)
 local changelogText = [[
-v1.0 - Initial Release  
-v1.1 - Fixed Button Layering  
-v1.2 - Added Changelog Tab  
-(You can edit this text in the script)
+Released!)
 ]]
 
 local changelogBox = Instance.new("TextLabel")
