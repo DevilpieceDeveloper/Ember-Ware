@@ -83,7 +83,7 @@ addCorner(homeTab, 20)
 local welcomeText = Instance.new("TextLabel")
 welcomeText.Size = UDim2.new(1, 0, 0, 50)
 welcomeText.Position = UDim2.new(0, 0, 0, 0)
-welcomeText.Text = "Welcome, " .. player.DisplayName .. " to EmberWare v.1"
+welcomeText.Text = "Welcome, " .. player.DisplayName .. " to EmberWare V.1"
 welcomeText.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 welcomeText.TextColor3 = Color3.fromRGB(255, 69, 0)  -- Red/Orange Color
 welcomeText.TextScaled = true
@@ -93,7 +93,7 @@ welcomeText.Parent = homeTab
 local madeByText = Instance.new("TextLabel")
 madeByText.Size = UDim2.new(1, 0, 0, 50)
 madeByText.Position = UDim2.new(0, 0, 0, 60)
-madeByText.Text = "Made by @Draco"
+madeByText.Text = "Made by @Draco. Latest: added Bedwars functionality"
 madeByText.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 madeByText.TextColor3 = Color3.fromRGB(0, 255, 255)  -- Neon Blue
 madeByText.TextScaled = true
