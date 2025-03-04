@@ -1,7 +1,6 @@
 local player = game.Players.LocalPlayer
 local teleportService = game:GetService("TeleportService")
 local userInputService = game:GetService("UserInputService")
-local runService = game:GetService("RunService")
 local players = game:GetService("Players")
 local gameID = game.PlaceId
 
@@ -17,6 +16,18 @@ local function addCorner(uiElement, radius)
     corner.Parent = uiElement
 end
 
+-- EmberWare Button (Opens GUI)
+local openButton = Instance.new("TextButton")
+openButton.Size = UDim2.new(0, 150, 0, 50)
+openButton.Position = UDim2.new(0, 10, 0.5, -25) -- Left side of screen
+openButton.Text = "Ember-Ware"
+openButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+openButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+openButton.Font = Enum.Font.GothamBold
+openButton.TextScaled = true
+openButton.Parent = gui
+addCorner(openButton, 15)
+
 -- Main UI Frame
 local mainFrame = Instance.new("Frame")
 mainFrame.Size = UDim2.new(0, 600, 0, 400)
@@ -27,14 +38,6 @@ mainFrame.Active = true
 mainFrame.Draggable = true
 mainFrame.Parent = gui
 addCorner(mainFrame, 20)
-
--- Tab List (Side Column)
-local tabList = Instance.new("Frame")
-tabList.Size = UDim2.new(0, 120, 1, 0)
-tabList.Position = UDim2.new(0, 0, 0, 0)
-tabList.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-tabList.Parent = mainFrame
-addCorner(tabList, 15)
 
 -- Close Button
 local closeButton = Instance.new("TextButton")
@@ -49,134 +52,117 @@ closeButton.MouseButton1Click:Connect(function()
     mainFrame.Visible = false
 end)
 
+-- Sidebar for Tabs
+local tabFrame = Instance.new("Frame")
+tabFrame.Size = UDim2.new(0, 100, 1, 0)
+tabFrame.Position = UDim2.new(0, 0, 0, 0)
+tabFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+tabFrame.Parent = mainFrame
+addCorner(tabFrame, 15)
+
 -- Function to create tab buttons
-local function createTabButton(name, position)
-    local button = Instance.new("TextButton")
-    button.Size = UDim2.new(1, -10, 0, 40)
-    button.Position = UDim2.new(0, 5, 0, position)
-    button.Text = name
-    button.TextColor3 = Color3.fromRGB(255, 255, 255)
-    button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    button.Parent = tabList
-    button.TextScaled = true
-    button.Font = Enum.Font.GothamBold
-    addCorner(button, 10)
-    return button
+local function createTab(name)
+    local tab = Instance.new("TextButton")
+    tab.Size = UDim2.new(1, 0, 0, 40)
+    tab.Text = name
+    tab.TextColor3 = Color3.fromRGB(255, 255, 255)
+    tab.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    tab.Parent = tabFrame
+    addCorner(tab, 10)
+    return tab
 end
 
--- Tabs
-local tabs = { "Home", "TP", "Misc", "Config" }
+local homeTab = createTab("Home")
+local tpTab = createTab("TP")
+local miscTab = createTab("Misc")
+local configTab = createTab("Config")
+local bedwarsTab
+
 if gameID == 6872265039 then
-    table.insert(tabs, "BedWars")
-end
-
-local tabButtons = {}
-local contentFrames = {}
-
-for i, tab in ipairs(tabs) do
-    local button = createTabButton(tab, (i - 1) * 50 + 10)
-    tabButtons[tab] = button
-
-    local frame = Instance.new("Frame")
-    frame.Size = UDim2.new(1, -120, 1, 0)
-    frame.Position = UDim2.new(0, 120, 0, 0)
-    frame.BackgroundTransparency = 1
-    frame.Parent = mainFrame
-    frame.Visible = (tab == "Home")
-    contentFrames[tab] = frame
+    bedwarsTab = createTab("BedWars")
 end
 
 -- Home Tab
-local homeLabel = Instance.new("TextLabel")
-homeLabel.Size = UDim2.new(1, -20, 0, 50)
-homeLabel.Position = UDim2.new(0, 10, 0, 50)
-homeLabel.Text = "Welcome, " .. player.DisplayName .. " to EmberWare v1."
-homeLabel.TextColor3 = Color3.fromRGB(255, 100, 0) -- Red/Orange
-homeLabel.TextScaled = true
-homeLabel.Font = Enum.Font.GothamBold
-homeLabel.Parent = contentFrames["Home"]
+local homeFrame = Instance.new("Frame")
+homeFrame.Size = UDim2.new(1, -100, 1, 0)
+homeFrame.Position = UDim2.new(0, 100, 0, 0)
+homeFrame.BackgroundTransparency = 1
+homeFrame.Parent = mainFrame
 
-local madeByLabel = Instance.new("TextLabel")
-madeByLabel.Size = UDim2.new(1, -20, 0, 30)
-madeByLabel.Position = UDim2.new(0, 10, 0, 100)
-madeByLabel.Text = "Made by @Draco"
-madeByLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
-madeByLabel.TextScaled = true
-madeByLabel.Font = Enum.Font.Gotham
-madeByLabel.Parent = contentFrames["Home"]
+local welcomeText = Instance.new("TextLabel")
+welcomeText.Size = UDim2.new(1, 0, 0, 100)
+welcomeText.Text = "Welcome, " .. player.DisplayName .. " to EmberWare v.1"
+welcomeText.TextColor3 = Color3.fromRGB(255, 120, 0)
+welcomeText.TextScaled = true
+welcomeText.Parent = homeFrame
 
--- Config Tab (Color & Image ID)
-local colorBox = Instance.new("TextBox")
-colorBox.Size = UDim2.new(0.8, 0, 0, 40)
-colorBox.Position = UDim2.new(0.1, 0, 0.2, 0)
-colorBox.PlaceholderText = "Enter RGB (e.g., 2,255,19)"
-colorBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-colorBox.Parent = contentFrames["Config"]
-addCorner(colorBox, 10)
+local madeByText = Instance.new("TextLabel")
+madeByText.Size = UDim2.new(1, 0, 0, 30)
+madeByText.Position = UDim2.new(0, 0, 0.2, 0)
+madeByText.Text = "Made by @Draco"
+madeByText.TextColor3 = Color3.fromRGB(200, 200, 200)
+madeByText.TextScaled = true
+madeByText.Parent = homeFrame
 
-local imageBox = Instance.new("TextBox")
-imageBox.Size = UDim2.new(0.8, 0, 0, 40)
-imageBox.Position = UDim2.new(0.1, 0, 0.4, 0)
-imageBox.PlaceholderText = "Enter Roblox Image ID"
-imageBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-imageBox.Parent = contentFrames["Config"]
-addCorner(imageBox, 10)
-
-local function applyChanges()
-    local rgb = string.split(colorBox.Text, ",")
-    if #rgb == 3 then
-        local r, g, b = tonumber(rgb[1]), tonumber(rgb[2]), tonumber(rgb[3])
-        if r and g and b then
-            for _, button in pairs(tabButtons) do
-                button.BackgroundColor3 = Color3.fromRGB(r, g, b)
-            end
+-- Function to switch tabs
+local function switchTab(frame)
+    for _, child in ipairs(mainFrame:GetChildren()) do
+        if child:IsA("Frame") and child ~= tabFrame then
+            child.Visible = false
         end
     end
-    if imageBox.Text ~= "" then
-        local imageId = "rbxassetid://" .. imageBox.Text
-        mainFrame.BackgroundTransparency = 1
-        mainFrame.BackgroundImage = imageId
-    end
+    frame.Visible = true
 end
 
-colorBox.FocusLost:Connect(applyChanges)
-imageBox.FocusLost:Connect(applyChanges)
+homeTab.MouseButton1Click:Connect(function() switchTab(homeFrame) end)
 
--- BedWars Tab
-if gameID == 6872265039 then
-    local bedwarsFrame = contentFrames["BedWars"]
+-- TP Tab
+local tpFrame = Instance.new("Frame")
+tpFrame.Size = UDim2.new(1, -100, 1, 0)
+tpFrame.Position = UDim2.new(0, 100, 0, 0)
+tpFrame.Visible = false
+tpFrame.Parent = mainFrame
 
-    local function createBedWarsButton(name, yPos)
-        local button = Instance.new("TextButton")
-        button.Size = UDim2.new(0.8, 0, 0, 40)
-        button.Position = UDim2.new(0.1, 0, 0, yPos)
-        button.Text = name
-        button.TextColor3 = Color3.fromRGB(255, 255, 255)
-        button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-        button.Parent = bedwarsFrame
-        addCorner(button, 10)
-        return button
-    end
+tpTab.MouseButton1Click:Connect(function()
+    tpFrame:ClearAllChildren()
+    switchTab(tpFrame)
 
-    createBedWarsButton("Nametags", 50).MouseButton1Click:Connect(function()
-        print("Nametags enabled") -- Implement Nametag logic
-    end)
-
-    createBedWarsButton("Spider (Wall Climb)", 100).MouseButton1Click:Connect(function()
-        print("Spider mode enabled") -- Implement climbing logic
-    end)
-
-    createBedWarsButton("Hitboxes", 150).MouseButton1Click:Connect(function()
-        print("Hitboxes expanded") -- Implement hitbox expansion
-    end)
-end
-
--- Tab Switching
-for tab, button in pairs(tabButtons) do
-    button.MouseButton1Click:Connect(function()
-        for _, frame in pairs(contentFrames) do
-            frame.Visible = false
+    for _, plr in ipairs(players:GetPlayers()) do
+        if plr ~= player then
+            local btn = Instance.new("TextButton")
+            btn.Size = UDim2.new(1, 0, 0, 40)
+            btn.Text = plr.DisplayName
+            btn.Parent = tpFrame
+            addCorner(btn, 10)
+            btn.MouseButton1Click:Connect(function()
+                player.Character.HumanoidRootPart.CFrame = plr.Character.HumanoidRootPart.CFrame
+            end)
         end
-        contentFrames[tab].Visible = true
-    end)
-end
+    end
+end)
+
+-- Config Tab
+local configFrame = Instance.new("Frame")
+configFrame.Size = UDim2.new(1, -100, 1, 0)
+configFrame.Position = UDim2.new(0, 100, 0, 0)
+configFrame.Visible = false
+configFrame.Parent = mainFrame
+
+local colorTextBox = Instance.new("TextBox")
+colorTextBox.Size = UDim2.new(0.8, 0, 0, 40)
+colorTextBox.Position = UDim2.new(0.1, 0, 0.2, 0)
+colorTextBox.Text = "Enter RGB (e.g., 2,255,19)"
+colorTextBox.Parent = configFrame
+
+local imageTextBox = Instance.new("TextBox")
+imageTextBox.Size = UDim2.new(0.8, 0, 0, 40)
+imageTextBox.Position = UDim2.new(0.1, 0, 0.3, 0)
+imageTextBox.Text = "Enter Roblox Image ID"
+imageTextBox.Parent = configFrame
+
+configTab.MouseButton1Click:Connect(function() switchTab(configFrame) end)
+
+-- Make EmberWare Button Toggle GUI
+openButton.MouseButton1Click:Connect(function()
+    mainFrame.Visible = not mainFrame.Visible
+end)
