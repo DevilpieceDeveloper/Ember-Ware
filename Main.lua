@@ -9,7 +9,7 @@ local gui = Instance.new("ScreenGui")
 gui.Parent = player:WaitForChild("PlayerGui")
 gui.ResetOnSpawn = false
 
--- Add rounded corners function
+-- Function to Add Rounded Corners
 local function addCorner(uiElement, radius)
     local corner = Instance.new("UICorner")
     corner.CornerRadius = UDim.new(0, radius)
@@ -96,6 +96,7 @@ createTabButton("Home")
 createTabButton("TP")
 createTabButton("Misc")
 createTabButton("Config")
+createTabButton("Changelog")
 
 -- Home Tab
 local homeLabel = Instance.new("TextLabel")
@@ -103,6 +104,7 @@ homeLabel.Size = UDim2.new(1, 0, 0, 50)
 homeLabel.Text = "Welcome, " .. player.DisplayName .. " to EmberWare v.1"
 homeLabel.TextScaled = true
 homeLabel.TextColor3 = Color3.fromRGB(255, 85, 0) -- Animated later
+homeLabel.BackgroundTransparency = 1
 homeLabel.Parent = tabs["Home"].Frame
 
 local creatorLabel = Instance.new("TextLabel")
@@ -113,46 +115,24 @@ creatorLabel.TextScaled = true
 creatorLabel.TextColor3 = Color3.fromRGB(0, 200, 255)
 creatorLabel.Parent = tabs["Home"].Frame
 
--- TP Tab
-local tpList = Instance.new("ScrollingFrame")
-tpList.Size = UDim2.new(1, 0, 1, -10)
-tpList.Parent = tabs["TP"].Frame
+-- Changelog Tab (Editable Text)
+local changelogText = [[
+v1.0 - Initial Release  
+v1.1 - Fixed Button Layering  
+v1.2 - Added Changelog Tab  
+(You can edit this text in the script)
+]]
 
-for _, plr in ipairs(players:GetPlayers()) do
-    local tpButton = Instance.new("TextButton")
-    tpButton.Size = UDim2.new(1, 0, 0, 40)
-    tpButton.Text = plr.DisplayName
-    tpButton.Parent = tpList
-    tpButton.MouseButton1Click:Connect(function()
-        player.Character.HumanoidRootPart.CFrame = plr.Character.HumanoidRootPart.CFrame
-    end)
-end
-
--- Misc Tab
-local miscFrame = tabs["Misc"].Frame
-local jumpToggle = Instance.new("TextButton")
-jumpToggle.Size = UDim2.new(0, 100, 0, 50)
-jumpToggle.Text = "Infinite Jump (OFF)"
-jumpToggle.Parent = miscFrame
-jumpToggle.MouseButton1Click:Connect(function()
-    infiniteJump = not infiniteJump
-    jumpToggle.Text = "Infinite Jump (" .. (infiniteJump and "ON" or "OFF") .. ")"
-end)
-
--- Config Tab
-local configFrame = tabs["Config"].Frame
-local colorInput = Instance.new("TextBox")
-colorInput.Size = UDim2.new(1, 0, 0, 40)
-colorInput.PlaceholderText = "Enter RGB (2,255,19)"
-colorInput.Parent = configFrame
-colorInput.FocusLost:Connect(function()
-    local r, g, b = colorInput.Text:match("(%d+),(%d+),(%d+)")
-    if r and g and b then
-        for _, tab in pairs(tabs) do
-            tab.Button.BackgroundColor3 = Color3.fromRGB(tonumber(r), tonumber(g), tonumber(b))
-        end
-    end
-end)
+local changelogBox = Instance.new("TextLabel")
+changelogBox.Size = UDim2.new(1, -20, 1, -20)
+changelogBox.Position = UDim2.new(0, 10, 0, 10)
+changelogBox.Text = changelogText
+changelogBox.TextScaled = false
+changelogBox.TextWrapped = true
+changelogBox.TextYAlignment = Enum.TextYAlignment.Top
+changelogBox.BackgroundTransparency = 1
+changelogBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+changelogBox.Parent = tabs["Changelog"].Frame
 
 -- Show BedWars Tab if Game ID Matches
 if game.PlaceId == 6872265039 then
