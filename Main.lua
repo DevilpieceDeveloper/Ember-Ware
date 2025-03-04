@@ -1,6 +1,5 @@
 local player = game.Players.LocalPlayer
 local teleportService = game:GetService("TeleportService")
-local userInputService = game:GetService("UserInputService")
 local players = game:GetService("Players")
 local gameID = game.PlaceId
 
@@ -16,10 +15,10 @@ local function addCorner(uiElement, radius)
     corner.Parent = uiElement
 end
 
--- EmberWare Button (Opens GUI)
+-- EmberWare Button
 local openButton = Instance.new("TextButton")
 openButton.Size = UDim2.new(0, 150, 0, 50)
-openButton.Position = UDim2.new(0, 10, 0.5, -25) -- Left side of screen
+openButton.Position = UDim2.new(0, 10, 0.5, -25)
 openButton.Text = "Ember-Ware"
 openButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 openButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
@@ -92,17 +91,28 @@ homeFrame.Parent = mainFrame
 local welcomeText = Instance.new("TextLabel")
 welcomeText.Size = UDim2.new(1, 0, 0, 100)
 welcomeText.Text = "Welcome, " .. player.DisplayName .. " to EmberWare v.1"
-welcomeText.TextColor3 = Color3.fromRGB(255, 120, 0)
+welcomeText.BackgroundTransparency = 1
 welcomeText.TextScaled = true
 welcomeText.Parent = homeFrame
 
 local madeByText = Instance.new("TextLabel")
 madeByText.Size = UDim2.new(1, 0, 0, 30)
-madeByText.Position = UDim2.new(0, 0, 0.2, 0)
+madeByText.Position = UDim2.new(0, 0, 0.8, 0) -- Lowered
 madeByText.Text = "Made by @Draco"
-madeByText.TextColor3 = Color3.fromRGB(200, 200, 200)
+madeByText.TextColor3 = Color3.fromRGB(0, 255, 255) -- Neon Blue
+madeByText.BackgroundTransparency = 1
 madeByText.TextScaled = true
 madeByText.Parent = homeFrame
+
+-- Animated Welcome Text (Red-Orange Cycle)
+spawn(function()
+    while true do
+        for i = 0, 1, 0.01 do
+            welcomeText.TextColor3 = Color3.fromHSV(i, 1, 1) -- Smooth transition
+            task.wait(0.02)
+        end
+    end
+end)
 
 -- Function to switch tabs
 local function switchTab(frame)
@@ -148,19 +158,24 @@ configFrame.Position = UDim2.new(0, 100, 0, 0)
 configFrame.Visible = false
 configFrame.Parent = mainFrame
 
-local colorTextBox = Instance.new("TextBox")
-colorTextBox.Size = UDim2.new(0.8, 0, 0, 40)
-colorTextBox.Position = UDim2.new(0.1, 0, 0.2, 0)
-colorTextBox.Text = "Enter RGB (e.g., 2,255,19)"
-colorTextBox.Parent = configFrame
-
-local imageTextBox = Instance.new("TextBox")
-imageTextBox.Size = UDim2.new(0.8, 0, 0, 40)
-imageTextBox.Position = UDim2.new(0.1, 0, 0.3, 0)
-imageTextBox.Text = "Enter Roblox Image ID"
-imageTextBox.Parent = configFrame
-
 configTab.MouseButton1Click:Connect(function() switchTab(configFrame) end)
+
+-- BedWars Tab (if in BedWars game)
+if bedwarsTab then
+    local bedwarsFrame = Instance.new("Frame")
+    bedwarsFrame.Size = UDim2.new(1, -100, 1, 0)
+    bedwarsFrame.Position = UDim2.new(0, 100, 0, 0)
+    bedwarsFrame.Visible = false
+    bedwarsFrame.Parent = mainFrame
+
+    local nametagsButton = Instance.new("TextButton")
+    nametagsButton.Size = UDim2.new(1, 0, 0, 40)
+    nametagsButton.Text = "Nametags (Shows Players & Health)"
+    nametagsButton.Parent = bedwarsFrame
+    addCorner(nametagsButton, 10)
+
+    bedwarsTab.MouseButton1Click:Connect(function() switchTab(bedwarsFrame) end)
+end
 
 -- Make EmberWare Button Toggle GUI
 openButton.MouseButton1Click:Connect(function()
