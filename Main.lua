@@ -119,7 +119,7 @@ madeByLabel.Parent = tabButtons["🏠 Home"].Frame
 local changelogLabel = Instance.new("TextLabel")
 changelogLabel.Size = UDim2.new(1, -150, 1, -50)
 changelogLabel.Position = UDim2.new(0, 150, 0, 10)
-changelogLabel.Text = "Add your changelog here."
+changelogLabel.Text = "V 1.2: Added Bedwars and Brookhaven functionality, and reworked UI. Version 2 is the next update!"
 changelogLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 changelogLabel.Font = Enum.Font.GothamBold
 changelogLabel.TextScaled = true
@@ -193,7 +193,10 @@ if game.PlaceId == 6872265039 then
     end)
 end
 
--- Open UI Button
+-- Initial Tab (Home)
+switchTab("🏠 Home")
+
+-- Open EmberWare Button
 local mainButton = Instance.new("TextButton")
 mainButton.Size = UDim2.new(0, 200, 0, 50)
 mainButton.Position = UDim2.new(0, 10, 0, 10)
