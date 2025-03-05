@@ -1,92 +1,51 @@
 local player = game.Players.LocalPlayer
 local teleportService = game:GetService("TeleportService")
-local userInput = game:GetService("UserInputService")
+local userInputService = game:GetService("UserInputService")
 local runService = game:GetService("RunService")
-local gameId = game.GameId
 
--- **Kick player if in blacklisted game**
-if gameId == 4924922222 then
+-- Kick player if in the restricted game
+if game.PlaceId == 4924922222 then
     player:Kick("No. Just NO")
     return
 end
 
--- **Create UI**
+-- Create UI
 local gui = Instance.new("ScreenGui")
 gui.Parent = player:WaitForChild("PlayerGui")
 gui.ResetOnSpawn = false
 
--- **Function to add rounded corners**
+-- Function to add rounded corners
 local function addCorner(uiElement, radius)
     local corner = Instance.new("UICorner")
     corner.CornerRadius = UDim.new(0, radius)
     corner.Parent = uiElement
 end
 
--- **Draggable function**
-local function makeDraggable(ui)
-    local dragging, dragInput, startPos
-    ui.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            dragging = true
-            startPos = input.Position
-        end
-    end)
-    ui.InputChanged:Connect(function(input)
-        if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-            local delta = input.Position - startPos
-            ui.Position = UDim2.new(0, ui.Position.X.Offset + delta.X, 0, ui.Position.Y.Offset + delta.Y)
-            startPos = input.Position
-        end
-    end)
-    ui.InputEnded:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            dragging = false
-        end
-    end)
-end
-
--- **Create Main Button**
+-- Main Button
 local mainButton = Instance.new("TextButton")
 mainButton.Size = UDim2.new(0, 150, 0, 60)
 mainButton.Position = UDim2.new(0, 20, 0, 20)
-mainButton.Text = "EMBERWARE"
+mainButton.Text = "EmberWare"
 mainButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-mainButton.TextColor3 = Color3.fromRGB(255, 85, 0)
-mainButton.Parent = gui
-mainButton.TextScaled = true
+mainButton.TextColor3 = Color3.fromRGB(255, 100, 0)
 mainButton.Font = Enum.Font.GothamBold
+mainButton.TextScaled = true
 mainButton.AutoButtonColor = true
+mainButton.Parent = gui
 addCorner(mainButton, 20)
 
--- **Glowing Effect for Main Button**
-local glow = Instance.new("UIStroke", mainButton)
-glow.Thickness = 2
-glow.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-glow.Color = Color3.fromRGB(255, 85, 0)
-glow.Transparency = 0.3
-
-local function animateGlow()
-    while true do
-        for i = 0, 1, 0.05 do
-            glow.Color = Color3.fromHSV(i, 1, 1)
-            wait(0.1)
-        end
-    end
-end
-spawn(animateGlow)
-
--- **Main UI Frame**
+-- UI Window
 local mainFrame = Instance.new("Frame")
 mainFrame.Size = UDim2.new(0, 500, 0, 350)
 mainFrame.Position = UDim2.new(0.5, -250, 0.5, -175)
 mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 mainFrame.Visible = false
 mainFrame.Active = true
-makeDraggable(mainFrame)
+mainFrame.Draggable = true
 mainFrame.Parent = gui
 addCorner(mainFrame, 20)
 
--- **Close Button**
+-- Close Button
 local closeButton = Instance.new("TextButton")
 closeButton.Size = UDim2.new(0, 40, 0, 40)
 closeButton.Position = UDim2.new(1, -50, 0, 10)
@@ -100,76 +59,132 @@ closeButton.MouseButton1Click:Connect(function()
     mainFrame.Visible = false
 end)
 
--- **Sidebar for Tabs**
-local sidebar = Instance.new("Frame")
-sidebar.Size = UDim2.new(0, 100, 1, 0)
-sidebar.Position = UDim2.new(0, 0, 0, 0)
-sidebar.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-sidebar.Parent = mainFrame
-addCorner(sidebar, 10)
+-- Tab Container
+local tabContainer = Instance.new("Frame")
+tabContainer.Size = UDim2.new(0, 120, 1, 0)
+tabContainer.Position = UDim2.new(0, 0, 0, 0)
+tabContainer.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+tabContainer.Parent = mainFrame
+addCorner(tabContainer, 10)
 
--- **Tab Buttons**
-local tabs = {"🏠 Home", "📍 TP", "🔧 Misc", "⚙️ Settings", "📜 Changelog"}
-if gameId == 6872265039 then
-    table.insert(tabs, "⚔️ BedWars")
+local tabList = {
+    {Name = "🏠 Home"},
+    {Name = "🚀 TP"},
+    {Name = "✨ Misc"},
+    {Name = "⚙ Settings"},
+    {Name = "📜 Changelog"}
+}
+
+if game.PlaceId == 6872265039 then
+    table.insert(tabList, {Name = "⚔ BedWars"})
 end
 
-local tabFrames = {}
+-- Tabs
+local tabButtons = {}
+local currentTab = nil
 
-local function createTab(name, index)
-    local tab = Instance.new("TextButton")
-    tab.Size = UDim2.new(1, 0, 0, 50)
-    tab.Position = UDim2.new(0, 0, 0, 50 * (index - 1))
-    tab.Text = name
-    tab.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    tab.TextColor3 = Color3.fromRGB(255, 255, 255)
-    tab.Font = Enum.Font.GothamBold
-    tab.TextScaled = true
-    tab.Parent = sidebar
-    addCorner(tab, 10)
-
-    local frame = Instance.new("Frame")
-    frame.Size = UDim2.new(1, -100, 1, 0)
-    frame.Position = UDim2.new(0, 100, 0, 0)
-    frame.BackgroundTransparency = 1
-    frame.Visible = false
-    frame.Parent = mainFrame
-    tabFrames[name] = frame
-
-    -- Hover Effect
-    local uiStroke = Instance.new("UIStroke", tab)
-    uiStroke.Thickness = 3
-    uiStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-    uiStroke.Color = Color3.fromRGB(255, 85, 0)
-    uiStroke.Transparency = 1
-
-    tab.MouseEnter:Connect(function()
-        for i = 1, 10 do
-            uiStroke.Transparency = 1 - (i / 10)
-            wait(0.02)
+local function switchTab(tabName)
+    for _, frame in ipairs(mainFrame:GetChildren()) do
+        if frame:IsA("Frame") and frame ~= tabContainer then
+            frame.Visible = false
         end
+    end
+    if tabButtons[tabName] then
+        tabButtons[tabName].Frame.Visible = true
+    end
+end
+
+for _, tabData in ipairs(tabList) do
+    local tabButton = Instance.new("TextButton")
+    tabButton.Size = UDim2.new(1, 0, 0, 40)
+    tabButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    tabButton.Text = tabData.Name
+    tabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    tabButton.Parent = tabContainer
+    addCorner(tabButton, 8)
+
+    local tabFrame = Instance.new("Frame")
+    tabFrame.Size = UDim2.new(1, 0, 1, 0)
+    tabFrame.Position = UDim2.new(0, 120, 0, 0)
+    tabFrame.BackgroundTransparency = 1
+    tabFrame.Visible = false
+    tabFrame.Parent = mainFrame
+
+    tabButton.MouseButton1Click:Connect(function()
+        switchTab(tabData.Name)
     end)
 
-    tab.MouseLeave:Connect(function()
-        for i = 1, 10 do
-            uiStroke.Transparency = i / 10
-            wait(0.02)
-        end
-    end)
+    tabButtons[tabData.Name] = {Button = tabButton, Frame = tabFrame}
+end
 
-    tab.MouseButton1Click:Connect(function()
-        for _, f in pairs(tabFrames) do
-            f.Visible = false
-        end
-        frame.Visible = true
+-- Home
+local homeLabel = Instance.new("TextLabel")
+homeLabel.Size = UDim2.new(1, -130, 0, 50)
+homeLabel.Position = UDim2.new(0, 130, 0, 10)
+homeLabel.Text = "Welcome, " .. player.DisplayName .. " to EmberWare v1."
+homeLabel.TextColor3 = Color3.fromRGB(255, 100, 0)
+homeLabel.Font = Enum.Font.GothamBold
+homeLabel.TextScaled = true
+homeLabel.BackgroundTransparency = 1
+homeLabel.Parent = tabButtons["🏠 Home"].Frame
+
+local madeByLabel = Instance.new("TextLabel")
+madeByLabel.Size = UDim2.new(1, -130, 0, 30)
+madeByLabel.Position = UDim2.new(0, 130, 0, 60)
+madeByLabel.Text = "Made by @Draco"
+madeByLabel.TextColor3 = Color3.fromRGB(0, 255, 255)
+madeByLabel.Font = Enum.Font.GothamBold
+madeByLabel.TextScaled = true
+madeByLabel.BackgroundTransparency = 1
+madeByLabel.Parent = tabButtons["🏠 Home"].Frame
+
+-- Teleport Tab
+local tpList = Instance.new("ScrollingFrame")
+tpList.Size = UDim2.new(1, -130, 1, -50)
+tpList.Position = UDim2.new(0, 130, 0, 10)
+tpList.CanvasSize = UDim2.new(0, 0, 1, 0)
+tpList.Parent = tabButtons["🚀 TP"].Frame
+
+for _, plr in ipairs(game.Players:GetPlayers()) do
+    local tpButton = Instance.new("TextButton")
+    tpButton.Size = UDim2.new(1, 0, 0, 40)
+    tpButton.Text = plr.DisplayName
+    tpButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    tpButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    tpButton.Parent = tpList
+    addCorner(tpButton, 8)
+
+    tpButton.MouseButton1Click:Connect(function()
+        player.Character:MoveTo(plr.Character:GetPrimaryPartCFrame().p)
     end)
 end
 
-for i, name in ipairs(tabs) do
-    createTab(name, i)
-end
+-- Settings
+local buttonColorBox = Instance.new("TextBox")
+buttonColorBox.Size = UDim2.new(1, -130, 0, 40)
+buttonColorBox.Position = UDim2.new(0, 130, 0, 10)
+buttonColorBox.PlaceholderText = "Enter RGB (e.g. 255,0,0)"
+buttonColorBox.Parent = tabButtons["⚙ Settings"].Frame
 
--- **Show UI when EmberWare button is clicked**
+local imageIDBox = Instance.new("TextBox")
+imageIDBox.Size = UDim2.new(1, -130, 0, 40)
+imageIDBox.Position = UDim2.new(0, 130, 0, 60)
+imageIDBox.PlaceholderText = "Enter Image ID"
+imageIDBox.Parent = tabButtons["⚙ Settings"].Frame
+
+-- Changelog
+local changelogLabel = Instance.new("TextLabel")
+changelogLabel.Size = UDim2.new(1, -130, 1, -50)
+changelogLabel.Position = UDim2.new(0, 130, 0, 10)
+changelogLabel.Text = "Add your changelog here."
+changelogLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+changelogLabel.TextScaled = true
+changelogLabel.BackgroundTransparency = 1
+changelogLabel.Parent = tabButtons["📜 Changelog"].Frame
+
+-- Open UI
 mainButton.MouseButton1Click:Connect(function()
     mainFrame.Visible = not mainFrame.Visible
 end)
+
+switchTab("🏠 Home")
