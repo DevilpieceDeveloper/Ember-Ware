@@ -147,19 +147,80 @@ for _, plr in ipairs(game.Players:GetPlayers()) do
     end)
 end
 
+-- BedWars Tab Features
+if game.PlaceId == 6872265039 then
+    local bedWarsFrame = Instance.new("Frame")
+    bedWarsFrame.Size = UDim2.new(1, -150, 1, -50)
+    bedWarsFrame.Position = UDim2.new(0, 150, 0, 10)
+    bedWarsFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    bedWarsFrame.Visible = true
+    bedWarsFrame.Parent = tabButtons["⚔ BedWars"].Frame
+
+    -- No CPS Limit
+    local noCpsLimitButton = Instance.new("TextButton")
+    noCpsLimitButton.Size = UDim2.new(1, 0, 0, 50)
+    noCpsLimitButton.Text = "No CPS Limit"
+    noCpsLimitButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    noCpsLimitButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    noCpsLimitButton.Parent = bedWarsFrame
+
+    -- Wall Climb
+    local wallClimbButton = Instance.new("TextButton")
+    wallClimbButton.Size = UDim2.new(1, 0, 0, 50)
+    wallClimbButton.Text = "Wall Climb"
+    wallClimbButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    wallClimbButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    wallClimbButton.Parent = bedWarsFrame
+
+    -- Go Home (Teleport)
+    local goHomeButton = Instance.new("TextButton")
+    goHomeButton.Size = UDim2.new(1, 0, 0, 50)
+    goHomeButton.Text = "Go Home"
+    goHomeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    goHomeButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    goHomeButton.Parent = bedWarsFrame
+
+    goHomeButton.MouseButton1Click:Connect(function()
+        local character = player.Character
+        if character then
+            -- Teleport upwards by 10 meters, freeze, then teleport to original position
+            local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+            local originalPosition = humanoidRootPart.Position
+            humanoidRootPart.CFrame = CFrame.new(originalPosition + Vector3.new(0, 10, 0))
+            wait(0.5)
+            humanoidRootPart.CFrame = CFrame.new(originalPosition)
+        end
+    end)
+end
+
 -- Open UI Button
 local mainButton = Instance.new("TextButton")
-mainButton.Size = UDim2.new(0, 160, 0, 60)
-mainButton.Position = UDim2.new(0, 20, 0, 20)
-mainButton.Text = "EmberWare"
+mainButton.Size = UDim2.new(0, 200, 0, 50)
+mainButton.Position = UDim2.new(0, 10, 0, 10)
+mainButton.Text = "Open EmberWare"
+mainButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 mainButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-mainButton.TextColor3 = Color3.fromRGB(255, 100, 0)
 mainButton.Font = Enum.Font.GothamBold
-mainButton.TextScaled = true
-mainButton.Parent = gui
+mainButton.TextSize = 24
+mainButton.Parent = player.PlayerGui
 
 mainButton.MouseButton1Click:Connect(function()
-    mainFrame.Visible = not mainFrame.Visible
+    mainFrame.Visible = true
 end)
 
-switchTab("🏠 Home") -- Default tab
+-- Add Animation
+local function animateButton(button)
+    button.MouseButton1Click:Connect(function()
+        button.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+        wait(0.1)
+        button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    end)
+end
+
+animateButton(mainButton)
+animateButton(closeButton)
+animateButton(tabButtons["🏠 Home"].Button)
+animateButton(tabButtons["🚀 TP"].Button)
+animateButton(tabButtons["✨ Misc"].Button)
+animateButton(tabButtons["⚙ Settings"].Button)
+animateButton(tabButtons["📜 Changelog"].Button)
